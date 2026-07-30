@@ -1,0 +1,17 @@
+venv
+.venv
+storage/logs/*
+*/**/__pycache__
+.env
+.env.*
+!.env.example
+!.env.*.example
+logs/*
+__pycache__/
+.pytest_cache/
+.coverage
+htmlcov/
+.idea/
+.ai
+*.pyc
+*.log

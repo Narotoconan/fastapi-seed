@@ -1,0 +1,169 @@
+[project]
+name = "fastapi-template"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "asyncpg>=0.31.0",
+    "faker>=40.28.0",
+    "fastapi>=0.138.2",
+    "limits>=5.8.0",
+    "loguru>=0.7.3",
+    "pydantic-settings>=2.14.2",
+    "pyjwt[crypto]>=2.13.0",
+    "redis>=8.0.1",
+    "sqlalchemy>=2.0.51",
+    "uuid6>=2025.0.1",
+    "uvicorn>=0.49.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.1.1",
+    "ruff>=0.15.20",
+    "ty>=0.0.55",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
+# ==============================================================================
+# ty 配置
+# 文档: https://docs.astral.sh/ty/
+# ==============================================================================
+[tool.ty.environment]
+# 与项目运行时版本保持一致，避免使用 ty 默认的最新 Python 版本推断。
+python-version = "3.12"
+# 项目采用根目录下的 app/ 与 config/ 作为一方包，根目录需参与模块解析。
+root = ["."]
+
+[tool.ty.src]
+# 第一阶段只检查项目源码、配置、测试与入口文件，不扫描缓存、日志、迁移等目录。
+include = [
+    "app",
+    "config",
+    "tests",
+    "main.py",
+]
+exclude = [
+    ".venv",
+    ".git",
+    ".ruff_cache",
+    ".pytest_cache",
+    "__pycache__",
+    "logs",
+    "migrations",
+]
+
+[tool.ty.rules]
+# ty 仍处于 beta，先以 warning 方式接入，待存量诊断治理后再逐步提升为 error。
+all = "warn"
+
+[tool.ty.terminal]
+# 第一阶段允许 warning 不阻断命令退出，用于持续观察类型诊断。
+error-on-warning = false
+output-format = "concise"
+
+# ==============================================================================
+# Ruff 配置
+# 文档: https://docs.astral.sh/ruff/
+# ==============================================================================
+[tool.ruff]
+# 对应 requires-python，确保升级建议与运行时一致
+target-version = "py312"
+# 行宽：120 兼顾中文注释和 FastAPI 较长的函数签名
+line-length = 120
+# 不检查虚拟环境、缓存及自动生成文件
+exclude = [
+    ".venv",
+    "__pycache__",
+    "*.egg-info",
+    ".git",
+    ".mypy_cache",
+    ".ruff_cache",
+    "migrations",
+]
+
+# ------------------------------------------------------------------------------
+# Linter 规则
+# ------------------------------------------------------------------------------
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle — 语法/格式错误
+    "W",   # pycodestyle — 警告（如行尾空格）
+    "F",   # pyflakes   — 未使用导入、未定义变量等
+    "I",   # isort      — import 排序规范
+    "UP",  # pyupgrade  — Python 3.12 新写法升级提示
+    "B",   # bugbear    — 常见 Bug 模式
+    "C4",  # comprehensions — 列表/字典推导式最佳实践
+    "ASYNC", # flake8-async — 异步函数中阻塞调用检查
+    "T20", # flake8-print   — 禁止 print()（规范：使用 log.*）
+    "TID", # tidy-imports   — 禁止导入指定模块（见下方 banned-api）
+    "RUF", # Ruff 原生规则  — 额外的 Python 最佳实践
+]
+ignore = [
+    # 行长度由 formatter 统一处理，lint 层不重复报告。
+    "E501",
+    # RUF001/RUF002/RUF003: 中文项目中全角标点（，。（）：）是正确写法，
+    # 这三条规则对中文字符串/注释/文档产生大量误报，整体关闭。
+    "RUF001",
+    "RUF002",
+    "RUF003",
+]
+
+# 按文件覆盖规则
+[tool.ruff.lint.per-file-ignores]
+# main.py 启动顺序有意为之（先初始化配置再导入模块），忽略 import 顺序相关规则
+"main.py" = ["E402", "I001"]
+# 日志基础设施模块本身合法使用 logging（配置 loguru sink / 引用日志级别常量），排除 TID251
+"app/core/log/*.py" = ["TID251"]
+"config/logger_config.py" = ["TID251"]
+
+# ------------------------------------------------------------------------------
+# isort：import 分组与排序
+# ------------------------------------------------------------------------------
+[tool.ruff.lint.isort]
+# 声明项目内部包，isort 会将其归为 first-party 单独分组
+known-first-party = ["app", "config"]
+# 每个分组之间保留一个空行
+force-sort-within-sections = false
+
+# ------------------------------------------------------------------------------
+# flake8-bugbear：默认参数函数调用检查
+# ------------------------------------------------------------------------------
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI 参数构造器用于声明接口参数元数据，允许作为路由默认值使用。
+extend-immutable-calls = [
+    "fastapi.Depends",
+    "fastapi.Query",
+    "fastapi.Path",
+    "fastapi.Body",
+    "fastapi.Header",
+    "fastapi.Cookie",
+    "fastapi.Form",
+    "fastapi.File",
+]
+
+# ------------------------------------------------------------------------------
+# flake8-tidy-imports：禁止使用原生 logging 模块
+# 对应开发规范第 2 节：严禁使用原生 logging，必须使用 app.core.log
+# ------------------------------------------------------------------------------
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"logging".msg = "禁止直接使用原生 logging 模块，请改用项目统一日志：from app.core.log import log"
+"logging.getLogger".msg = "禁止直接使用原生 logging 模块，请改用项目统一日志：from app.core.log import log"
+"app.core.log.log.exception".msg = "禁止使用 log.exception()，请使用规范允许的 log.error()/log.warning()/log.info()/log.debug()"
+
+# ------------------------------------------------------------------------------
+# Formatter（对标 Black 风格）
+# ------------------------------------------------------------------------------
+[tool.ruff.format]
+# 字符串统一使用双引号
+quote-style = "double"
+# 缩进使用空格
+indent-style = "space"
+# 行尾换行符自动适配（Windows/Unix 均可）
+line-ending = "auto"
+# 在 magic trailing comma 存在时保留多行展开
+skip-magic-trailing-comma = false
