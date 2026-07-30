@@ -1,0 +1,30 @@
+_min_copier_version: "9.17.0"
+_subdirectory: template
+_templates_suffix: .jinja
+_answers_file: .copier-answers.yml
+
+_envops:
+  keep_trailing_newline: true
+  undefined: jinja2.StrictUndefined
+
+_preserve_symlinks: false
+
+_message_before_copy: |
+  即将生成固定的 FastAPI 项目基线。
+  本模板只渲染项目文件，不会自动安装依赖、初始化 Git 或启动容器。
+
+_message_after_copy: |
+  项目已生成。
+  1. 进入目标目录：{{ _copier_conf.dst_path }}
+  2. 复制并填写环境变量示例文件。
+  3. 运行 uv sync --locked。
+  4. 按实际项目需要自行接入 tests、CI 和数据库迁移方案。
+  5. 将 uv.lock 与 .copier-answers.yml 一并提交到 Git。
+
+_message_before_update: |
+  即将更新由固定 FastAPI 项目基线生成的项目。
+  请确认目标项目已纳入 Git、当前工作区干净，并在独立分支执行更新。
+
+_message_after_update: |
+  模板已更新。
+  请先检查 Git diff 和冲突标记，再运行项目原有质量检查。
