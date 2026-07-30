@@ -17,7 +17,7 @@ from app.core.log import log
 from config.cache_config import CacheSettings
 from config.settings import get_settings
 
-_SERIALIZATION_PREFIX = "__fastapi_template_cache__:v1:"
+_SERIALIZATION_PREFIX = {{ ("__fastapi_" ~ redis_prefix ~ "_cache__:v1:") | to_json(ensure_ascii=False) }}
 _CLEAR_SCAN_COUNT = 500
 
 

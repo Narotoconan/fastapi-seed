@@ -1,11 +1,11 @@
-name: fastapi-template
+name: {{ project_name }}
 
 services:
   api:
     build:
       context: .
       target: runtime
-    image: fastapi-template:local
+    image: {{ project_name }}:local
     env_file:
       - .env.docker
     environment:

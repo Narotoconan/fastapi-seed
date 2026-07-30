@@ -5,9 +5,9 @@ Redis 缓存键前缀定义
 格式: {PROJECT_PREFIX}:{MODULE}:{SUB_KEY}:{RESOURCE_ID}
 
 示例:
-  template:user:profile:1
-  template:order:pending:O001
-  template:payment:invoice:INV001
+  {{ (redis_prefix | to_json(ensure_ascii=False))[1:-1] }}:user:profile:1
+  {{ (redis_prefix | to_json(ensure_ascii=False))[1:-1] }}:order:pending:O001
+  {{ (redis_prefix | to_json(ensure_ascii=False))[1:-1] }}:payment:invoice:INV001
 """
 
 
@@ -21,7 +21,7 @@ class RedisPrefixes:
     使用示例:
         key = f'{RedisPrefixes.USER_PROFILE}:1'
         await redis.set(key, user_data)
-        # REDIS_PREFIX 使用默认值时，Redis 中: template:user:profile:1
+        # REDIS_PREFIX 使用默认值时，Redis 中: {{ (redis_prefix | to_json(ensure_ascii=False))[1:-1] }}:user:profile:1
     """
 
     USER_SETTINGS = "user:settings"

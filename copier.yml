@@ -9,6 +9,47 @@ _envops:
 
 _preserve_symlinks: false
 
+project_name:
+  type: str
+  help: Python 分发名、Compose 项目名和镜像名使用的机器标识。
+  default: "fastapi-template"
+  validator: >-
+    {% if not (project_name | regex_search('\\A[a-z0-9]+(?:-[a-z0-9]+)*\\Z')) %}
+    仅允许小写字母、数字和单个连字符，且必须以字母或数字开头和结尾。
+    {% endif %}
+
+project_title:
+  type: str
+  help: README 使用的人类可读项目名称。
+  default: "FastAPI Template"
+  validator: >-
+    {% if not (project_title | trim) %}
+    项目展示名称去除首尾空白后不能为空。
+    {% endif %}
+
+project_description:
+  type: str
+  help: pyproject.toml 和 README 使用的项目简介。
+  default: 一个面向 Python 3.12 的异步 FastAPI 后端模板，内置 PostgreSQL、Redis、统一响应与异常处理、健康检查、日志、可选 JWT 鉴权和接口限流等基础能力。仓库更适合作为业务服务的起点，而不是带完整用户系统的成品应用。
+
+project_version:
+  type: str
+  help: 生成项目的初始 PEP 440 版本。
+  default: "0.1.0"
+  validator: >-
+    {% if not (project_version | regex_search('(?ai)\\Av?(?:[0-9]+!)?[0-9]+(?:[.][0-9]+)*(?:[-_.]?(?:alpha|a|beta|b|preview|pre|c|rc)[-_.]?[0-9]*)?(?:(?:-[0-9]+)|(?:[-_.]?(?:post|rev|r)[-_.]?[0-9]*))?(?:[-_.]?dev[-_.]?[0-9]*)?(?:[+][a-z0-9]+(?:[-_.][a-z0-9]+)*)?\\Z')) %}
+    请输入合法的 PEP 440 版本号。
+    {% endif %}
+
+redis_prefix:
+  type: str
+  help: Redis key 与缓存序列化使用的持久命名空间。
+  default: "template"
+  validator: >-
+    {% if not redis_prefix or (redis_prefix | regex_search('[:\\s\\x00-\\x1f\\x7f-\\x9f]')) %}
+    Redis 前缀不能为空，且不能包含空白、控制字符或冒号。
+    {% endif %}
+
 _message_before_copy: |
   即将生成固定的 FastAPI 项目基线。
   本模板只渲染项目文件，不会自动安装依赖、初始化 Git 或启动容器。

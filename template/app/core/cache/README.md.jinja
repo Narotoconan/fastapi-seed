@@ -56,7 +56,7 @@ app/core/cache/
 | `REDIS_MAX_CONNECTIONS` | `int` | `10` | 单进程连接池上限，至少 1 |
 | `REDIS_TIMEOUT` | `float` | `5` | 建立连接超时，必须大于 0 |
 | `REDIS_COMMAND_TIMEOUT` | `float` | `5` | 命令读写超时，必须大于 0 |
-| `REDIS_PREFIX` | `str` | `template` | 项目键命名空间，不得为空白 |
+| `REDIS_PREFIX` | `str` | `{{ redis_prefix }}` | 项目键命名空间，不得为空白 |
 
 连接池上限按应用进程计算；多进程部署时需要乘以进程数并结合 Redis 连接上限评估。启用接口限流后，
 还会建立一个独立的限流连接池（默认上限 5），总连接数需同时计入两者。
@@ -87,10 +87,10 @@ async def save_user_profile(
 await redis_manager.set("user:1", {"id": 1}, ex=300)
 ```
 
-当 `REDIS_PREFIX=template` 时，实际键为：
+当 `REDIS_PREFIX={{ redis_prefix }}` 时，实际键为：
 
 ```text
-template:user:1
+{{ redis_prefix }}:user:1
 ```
 
 建议使用 `{domain}:{resource}:{id}` 这样的稳定结构。模板当前提供以下业务前缀常量：

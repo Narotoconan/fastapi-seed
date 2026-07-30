@@ -16,8 +16,8 @@ def load_pyproject_toml() -> tuple[str, str]:
         config: Mapping[str, object] = tomllib.load(config_file)
     project_config = config.get("project")
     if not isinstance(project_config, Mapping):
-        return "fastapi-template", "0.1.0"
-    return str(project_config.get("name", "fastapi-template")), str(project_config.get("version", "0.1.0"))
+        return {{ project_name | to_json(ensure_ascii=False) }}, {{ project_version | to_json(ensure_ascii=False) }}
+    return str(project_config.get("name", {{ project_name | to_json(ensure_ascii=False) }})), str(project_config.get("version", {{ project_version | to_json(ensure_ascii=False) }}))
 
 
 class AppSettings(BaseSettings):

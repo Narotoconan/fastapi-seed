@@ -1,8 +1,6 @@
-# FastAPI Template
+# {{ project_title }}
 
-一个面向 Python 3.12 的异步 FastAPI 后端模板，内置 PostgreSQL、Redis、统一响应与异常处理、
-健康检查、日志、可选 JWT 鉴权和接口限流等基础能力。仓库更适合作为业务服务的起点，而不是
-带完整用户系统的成品应用。
+{{ project_description }}
 
 ## 特性与默认状态
 
@@ -133,7 +131,7 @@ HTTP 请求
 ## 项目结构
 
 ```text
-fastapi-template/
+{{ project_name }}/
 ├── main.py                     # 配置、日志、应用和组件注册入口
 ├── app/
 │   ├── api/                    # APIRouter 与接口层
@@ -169,7 +167,7 @@ fastapi-template/
 | --- | --- | --- |
 | 应用 | `APP_NAME`、`APP_VERSION` | 默认从 `pyproject.toml` 读取 |
 | PostgreSQL | `DB_PASSWORD` | 必填，至少 6 个字符；连接池与超时均可覆盖 |
-| Redis | `REDIS_HOST`、`REDIS_PREFIX` | 默认 `localhost` / `template` |
+| Redis | `REDIS_HOST`、`REDIS_PREFIX` | 默认 `localhost` / `{{ redis_prefix }}` |
 | JWT | `JWT_SECRET_KEY` | 必填，至少 32 个字符；中间件默认仍关闭 |
 | CORS / GZip | `CORS_*`、`GZIP_MINIMUM_SIZE` | CORS 列表必须使用 JSON 字符串 |
 | 限流 | `RATE_LIMIT_ENABLED`、`RATE_LIMIT_DEFAULT`、`RATE_LIMIT_FAIL_OPEN`、`RATE_LIMIT_REDIS_*` | 默认关闭；独立连接池默认上限为 5 |
