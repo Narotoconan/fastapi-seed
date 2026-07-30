@@ -1,0 +1,10 @@
+template/.env.docker.example
+template/.env.example
+template/app/core/cache/prefixes.py
+template/app/core/cache/README.md
+template/app/core/cache/redis.py
+template/compose.yaml
+template/config/app_config.py
+template/config/cache_config.py
+template/pyproject.toml
+template/README.md
