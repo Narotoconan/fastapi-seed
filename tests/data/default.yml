@@ -1,0 +1,5 @@
+project_name: fastapi-template
+project_title: FastAPI Template
+project_description: 一个面向 Python 3.12 的异步 FastAPI 后端模板，内置 PostgreSQL、Redis、统一响应与异常处理、健康检查、日志、可选 JWT 鉴权和接口限流等基础能力。仓库更适合作为业务服务的起点，而不是带完整用户系统的成品应用。
+project_version: 0.1.0
+redis_prefix: template

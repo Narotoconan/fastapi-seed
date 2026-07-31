@@ -1,0 +1,61 @@
+# Template maintenance repository only; generated projects use template/.gitignore.
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Root maintenance environments
+/.venv/
+/venv/
+/env/
+/ENV/
+
+# Test, type-checker, linter, and tool caches
+/.pytest_cache/
+/.ruff_cache/
+/.mypy_cache/
+/.pyright/
+/.hypothesis/
+/.tox/
+/.nox/
+/.cache/
+/.uv-cache/
+
+# Coverage and build output
+/.coverage
+/.coverage.*
+/coverage.xml
+/htmlcov/
+/build/
+/dist/
+/.eggs/
+*.egg-info/
+
+# Root-only runtime configuration and secrets
+/.env
+/.env.*
+!/.env.example
+!/.env.*.example
+
+# Root-only runtime output and temporary directories
+/logs/
+/tmp/
+/temp/
+*.log
+
+# IDE metadata
+/.idea/
+/.vscode/
+/.fleet/
+
+# Operating-system and editor artifacts
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# Intentionally keep uv.lock, .python-version, .copier-answers.yml,
+# CHANGELOG/release documents, and Copier conflict artifacts (*.rej) visible.

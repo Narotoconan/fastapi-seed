@@ -1,0 +1,5 @@
+project_name: order-service
+project_title: Order Service
+project_description: 'Async order API；支持中文、"quoted" 与 #special。'
+project_version: 0.1.0
+redis_prefix: order

@@ -51,21 +51,28 @@ redis_prefix:
     {% endif %}
 
 _message_before_copy: |
-  即将生成固定的 FastAPI 项目基线。
-  本模板只渲染项目文件，不会自动安装依赖、初始化 Git 或启动容器。
+  即将生成 FastAPI 项目。
+  Copier 只收集项目身份并渲染文件，不会收集运行期 secret。
+  本模板不会自动安装依赖、初始化 Git、启动容器或执行其他命令。
+  生成结果不包含 tests、CI workflow 或 Alembic。
 
 _message_after_copy: |
-  项目已生成。
-  1. 进入目标目录：{{ _copier_conf.dst_path }}
-  2. 复制并填写环境变量示例文件。
-  3. 运行 uv sync --locked。
-  4. 按实际项目需要自行接入 tests、CI 和数据库迁移方案。
+  项目已生成至：{{ _copier_conf.dst_path }}
+  1. 阅读生成项目的 README.md。
+  2. 复制环境变量示例并填写运行期配置；不要提交真实 secret。
+  3. 运行 uv lock --check；若自定义身份要求更新，确认索引后运行 uv lock。
+  4. 运行 uv sync --locked，并按 README.md 启动项目。
   5. 将 uv.lock 与 .copier-answers.yml 一并提交到 Git。
+  tests、CI workflow 和 Alembic 需按项目实际需要自行接入。
 
 _message_before_update: |
-  即将更新由固定 FastAPI 项目基线生成的项目。
-  请确认目标项目已纳入 Git、当前工作区干净，并在独立分支执行更新。
+  即将按 .copier-answers.yml 更新项目。
+  请确认 .copier-answers.yml 已提交、模板源可访问、当前工作区干净，并在独立分支执行更新。
+  Copier 不会同步依赖、运行项目检查或读取运行期 secret。
 
 _message_after_update: |
-  模板已更新。
-  请先检查 Git diff 和冲突标记，再运行项目原有质量检查。
+  模板文件已更新。
+  1. 检查 git status、Git diff、冲突标记和 .rej 文件。
+  2. 确认 .copier-answers.yml 中的 _commit 已更新。
+  3. 运行 uv lock --check，并处理确有需要的静态 lock 更新。
+  4. 运行该项目实际具备的质量检查后再提交。

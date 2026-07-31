@@ -28,7 +28,7 @@
 - 仓库不包含用户表、登录/注册接口、权限模型或 Token 签发服务。
 - `JWT_PUBLIC_PATHS` 中的 `/api/auth/login`、`/api/auth/register` 只是预留白名单，
   当前没有对应路由。
-- 仓库不包含 Alembic，也不会自动创建或迁移业务表。
+- 生成项目不包含 `tests/`、CI workflow 或 Alembic，也不会自动创建或迁移业务表。
 - `compose.yaml` 只运行 API；PostgreSQL 和 Redis 需要由外部提供。
 - `app/models/`、`app/repositories/`、`app/services/` 提供基础结构，业务 CRUD 需要自行实现。
 
@@ -41,7 +41,23 @@
 - 可访问的 PostgreSQL
 - 可访问的 Redis
 
-### 1. 安装依赖
+### 1. 检查并安装依赖
+
+模板静态复制 `uv.lock`，当前 lock 使用清华 PyPI 镜像。先检查它是否仍与项目身份一致：
+
+```bash
+uv lock --check
+```
+
+默认项目名和版本会直接通过。若自定义了项目名或初始版本，uv 可能要求刷新根项目元数据；确认采用的
+包索引后运行：
+
+```bash
+uv lock
+uv lock --check
+```
+
+不要手工替换 lock 内 URL。检查通过后安装锁定依赖：
 
 ```bash
 uv sync --locked
@@ -132,6 +148,9 @@ HTTP 请求
 
 ```text
 {{ project_name }}/
+├── .copier-answers.yml        # 模板来源、版本和非敏感项目身份答案
+├── .env.example               # 通用环境变量示例
+├── .env.docker.example        # Docker 环境变量示例
 ├── main.py                     # 配置、日志、应用和组件注册入口
 ├── app/
 │   ├── api/                    # APIRouter 与接口层
@@ -154,6 +173,7 @@ HTTP 请求
 ├── Dockerfile                  # 多阶段、非 root 运行镜像
 ├── compose.yaml                # 仅 API 的 Compose 编排
 ├── pyproject.toml              # 依赖与 Ruff / ty 配置
+├── LICENSE                     # Apache-2.0 许可证
 └── uv.lock                     # 锁定依赖
 ```
 
@@ -162,6 +182,9 @@ HTTP 请求
 主要、带注释的变量清单位于 [`.env.example`](.env.example)，Docker 专用示例位于
 [`.env.docker.example`](.env.docker.example)。配置按模块拆分在 [`config/`](config/) 中，
 并由 `config.settings.get_settings()` 缓存聚合。
+
+Copier 只把项目名称、标题、简介、初始版本和 Redis 前缀写入 `.copier-answers.yml`，不会询问或保存
+数据库密码、Redis 密码、JWT secret 或 Token。运行期 secret 必须通过环境变量或部署平台注入。
 
 | 配置组 | 关键项 | 说明 |
 | --- | --- | --- |
@@ -331,22 +354,20 @@ docker compose --env-file .env.docker down
 ## 开发与验证
 
 ```bash
-uv run ruff format .
+uv run ruff format --check .
 uv run ruff check .
 uv run ty check
+```
+
+生成项目预置 Ruff、ty 配置和 pytest 开发依赖，但不附带 `tests/` 测试套件、CI workflow 或
+Alembic。下游项目新增自己的测试后，可运行：
+
+```bash
 uv run pytest
 ```
 
-真实 Redis 限流冒烟测试默认跳过，只有显式设置 `TEST_REDIS_URL` 时才会运行。该地址必须指向隔离的
-测试 Redis，禁止使用生产实例；测试只会删除本次运行生成的唯一限流键：
-
-```bash
-uv run pytest tests/test_rate_limit_redis_integration.py
-```
-
-项目使用 [Ruff](https://docs.astral.sh/ruff/) 进行格式化与静态检查，使用
-[ty](https://docs.astral.sh/ty/) 持续观察类型诊断，并通过 pytest 覆盖配置、安全、生命周期、
-缓存、限流、数据库会话和响应契约。
+不要在尚未添加测试时把 `uv run pytest` 当作已交付的质量门禁；pytest 在没有测试时会以非零状态退出。
+数据库迁移与远程 CI 同样需要按团队工程规范自行建立。
 
 业务代码统一使用：
 
