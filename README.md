@@ -7,6 +7,11 @@
 `project_version` 和 `redis_prefix`。它不会按答案增删功能，也不会改变 `app`、`config` 或
 `main:app` 的既有结构。
 
+## 项目来源
+
+本项目基于 [Narotoconan/fastapi-template](https://github.com/Narotoconan/fastapi-template)
+改造，并在原有 FastAPI 工程模板基础上封装为 Copier 脚手架。
+
 ## 前置条件与安装
 
 需要 Git、Python 3.12 和 [uv](https://docs.astral.sh/uv/)。建议把锁定版本的 Copier 安装为独立工具：
