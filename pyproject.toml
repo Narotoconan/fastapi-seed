@@ -1,6 +1,6 @@
 [project]
 name = "fastapi-seed"
-version = "1.0.0"
+version = "1.0.1"
 description = "Local maintenance environment for the FastAPI Copier template"
 requires-python = ">=3.12"
 

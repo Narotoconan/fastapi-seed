@@ -57,8 +57,8 @@ wheels = [
 ]
 
 [[package]]
-name = "fastapi-seed-template-maintenance"
-version = "0.0.0"
+name = "fastapi-seed"
+version = "1.0.1"
 source = { virtual = "." }
 
 [package.dev-dependencies]

@@ -32,10 +32,10 @@ uv run copier --version
 
 ## 生成项目
 
-### 从当前本地仓库生成
+### 从本地未发布版本生成
 
-当前尚未发布正式模板 tag。开发或评估时，先确认模板仓库工作区干净，再从仓库根目录生成到一个
-不存在或为空的同级目录：
+开发或评估尚未发布的模板改动时，先确认模板仓库工作区干净，再从仓库根目录生成到一个不存在或
+为空的同级目录：
 
 ```bash
 copier copy --vcs-ref=HEAD . ../my-service
@@ -47,13 +47,16 @@ Git 历史中。
 
 ### 从正式版本生成
 
-正式发布后应使用不可变 tag。以下尖括号内容是占位符，必须替换成真实值：
+正式使用应通过稳定远端 URL 和不可变 tag 生成。先从项目的
+[版本标签](https://github.com/Narotoconan/fastapi-seed/tags)中选择所需版本，再将 `<version-tag>`
+替换为对应 tag：
 
 ```bash
-copier copy --vcs-ref=<template-tag> <template-git-url> <target-directory>
+copier copy --vcs-ref=<version-tag> https://github.com/Narotoconan/fastapi-seed.git ../my-service
 ```
 
-长期维护的项目应使用稳定远端 URL 和不可变 tag；本地 `HEAD` 方式只用于当前仓库的开发与评估。
+将 `<version-tag>` 替换为实际存在的不可变 tag，并将 `../my-service` 替换为实际目标目录。生成长期
+维护的项目时不要使用分支或其他浮动引用；本地 `HEAD` 方式只用于当前仓库尚未发布改动的开发与评估。
 
 ## 生成后启动
 
